@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otis 区笑君 | AI Product Designer</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Bebas+Neue&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           全局重置与 Agency 风格排版基础
+           ========================================= */
+        :root {
+            --bg-color: #f2f0eb;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --border-color: #d6d3cc;
+            --font-stack: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-serif: 'Times New Roman', Times, Georgia, serif;
+            --accent-color: #e5e5e5;
+            
+            --main-orange: #ED5629; 
+            --nav-text: #A6A6A6;    
+            --bracket-color: #E5481A; 
+            --sub-text: #D7D7D7; 
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-stack);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        body.is-loading {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; cursor: pointer; }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .placeholder {
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            border-radius: 8px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 100px;
+        }
+        .btn-back:hover { background: #e0ddd5; }
+
+        /* =========================================
+           1. 响应式 Startup Hero Section
+           ========================================= */
+        .startup-hero {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, #E5481A, #4B1100);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .startup-hero::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.1;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: clamp(15px, 3vh, 30px) 50px;
+            color: var(--nav-text);
+            font-family: 'Bebas Neue', sans-serif; 
+            font-size: 22px;
+            letter-spacing: 2px;
+            position: relative; 
+        }
+
+        .nav-logo { font-size: 36px; color: #FFFFFF; letter-spacing: 2px; }
+
+        .nav-center {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 60px; perspective: 1000px;
+        }
+
+        .nav-link-wrapper {
+            display: inline-block;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .nav-item {
+            position: relative; display: inline-block; transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            color: transparent; line-height: 30px; height: 30px;
+            pointer-events: none; 
+        }
+
+        .nav-item::before, .nav-item::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            color: var(--nav-text); text-align: center; pointer-events: none;
+        }
+
+        .nav-item::before { transform: translateZ(15px); }
+        .nav-item::after { transform: rotateX(-90deg) translateZ(15px); color: var(--main-orange); }
+        .nav-link-wrapper:hover .nav-item { transform: translateZ(-15px) rotateX(90deg); }
+
+        .main-content {
+            flex-grow: 1; display: flex; justify-content: center; align-items: center;
+            position: relative; width: 100%; max-width: 1400px; margin: 0 auto;
+        }
+
+        .center-container {
+            position: relative; display: flex; justify-content: center; align-items: center;
+            z-index: 10;
+        }
+
+        .tilt-wrapper {
+            height: 85vh;
+            min-height: 400px;
+            aspect-ratio: 3 / 4.1;
+            transform-style: preserve-3d;
+            cursor: pointer; 
+            position: relative; 
+            z-index: 5;
+        }
+
+        .flip-container {
+            width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flip-container.is-flipped { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: clamp(15px, 3vh, 35px); 
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 25px rgba(0,0,0,0.4);
+            overflow: hidden; background-color: #0D0D0D; 
+        }
+        .card-face img { width: 100%; height: 100%; object-fit: cover; color: white; text-align: center; }
+        .card-back { transform: rotateY(180deg); }
+
+        .bracket {
+            font-family: 'Abhaya Libre', serif; font-weight: 800; color: var(--bracket-color);
+            line-height: 0.9; position: absolute; top: 50%; transform: translateY(-50%);
+            user-select: none; z-index: 100;
+            transition: left 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        right 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        margin 1s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        font-size 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* 状态 1：加载中 */
+        body.is-loading .top-nav { opacity: 0; pointer-events: none; }
+        body.is-loading .left-bracket { right: 50%; margin-right: 40px; font-size: clamp(48px, 8vh, 80px); }
+        body.is-loading .right-bracket { left: 50%; margin-left: 70px; font-size: clamp(48px, 8vh, 80px); }
+        body.is-loading .tilt-wrapper { transform: scale(0); opacity: 0; pointer-events: none; }
+
+        #loader-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-family: 'Abhaya Libre', serif; font-size: clamp(32px, 6vh, 64px); font-weight: 800;
+            color: var(--bracket-color); z-index: 100; text-align: center; width: 140px; letter-spacing: 2px;
+        }
+        #loader-tis {
+            position: absolute; top: 50%; left: 50%; transform: translateY(-50%); margin-left: clamp(60px, 10vw, 90px); 
+            font-family: 'Abhaya Libre', serif; font-size: clamp(32px, 6vh, 64px); font-weight: 800;
+            color: var(--bracket-color); z-index: 100; letter-spacing: 4px;
+        }
+
+        .slogan-left, .slogan-right { opacity: 0; pointer-events: none; }
+
+        /* 状态 2：加载完成 */
+        body.is-loaded #loader-text, body.is-loaded #loader-tis { display: none; }
+        
+        body.is-loaded .left-bracket { 
+            right: 100%; 
+            margin-right: clamp(20px, 3vw, 40px); 
+            font-size: clamp(140px, 40vh, 320px); 
+            z-index: 1; 
+        }
+        
+        body.is-loaded .right-bracket { 
+            left: 100%; 
+            margin-left: clamp(20px, 3vw, 40px); 
+            font-size: clamp(140px, 40vh, 320px); 
+            z-index: 1; 
+        }
+        
+        body.is-loaded .tilt-wrapper {
+            transform: scale(1); opacity: 1; pointer-events: auto;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s, opacity 0.6s ease 0.1s; 
+        }
+        body.is-loaded .top-nav { opacity: 1; transition: opacity 1s ease 0.6s; }
+
+        .slogan-left {
+            position: absolute; top: 100%; right: 0; text-align: right; color: var(--main-orange);
+            font-family: 'Bebas Neue', sans-serif; font-size: clamp(22px, 4.5vh, 42px); line-height: 1.1; letter-spacing: 2px;
+            margin-top: 1.5vh; white-space: nowrap; transform-origin: top;
+        }
+        body.is-loaded .slogan-left { animation: foldDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.8s; }
+
+        .slogan-right {
+            position: absolute; bottom: 100%; left: 0; text-align: left; color: var(--sub-text);
+            font-family: 'Bebas Neue', sans-serif; font-size: clamp(14px, 2.8vh, 28px); line-height: 1.2; letter-spacing: 1px;
+            margin-bottom: 1.5vh; white-space: nowrap; transform-origin: bottom;
+        }
+        body.is-loaded .slogan-right { animation: foldUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.8s; }
+
+        @keyframes foldDown { 0% { transform: perspective(1000px) rotateX(-90deg); opacity: 0; } 100% { transform: perspective(1000px) rotateX(0deg); opacity: 1; } }
+        @keyframes foldUp { 0% { transform: perspective(1000px) rotateX(90deg); opacity: 0; } 100% { transform: perspective(1000px) rotateX(0deg); opacity: 1; } }
+
+        .hero-transition { 
+            width: 100%; 
+            height: 40vh; 
+            background: linear-gradient(to bottom, #4B1100, var(--bg-color)); 
+        }
+
+        /* =========================================
+           跑马灯层叠：拉进渐变区正中心并去除实色背景
+           ========================================= */
+        .marquee-container {
+            width: 100vw; 
+            margin-left: calc(-50vw + 50%); 
+            background-color: transparent; 
+            padding: 1.5rem 0;
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            border-top: 1px solid #111111; 
+            border-bottom: 1px solid #111111; 
+            margin-bottom: 8rem;
+            margin-top: -23vh; 
+            position: relative; 
+            z-index: 20; 
+        }
+        
+        .marquee-content { display: flex; white-space: nowrap; animation: scroll 25s linear infinite; }
+        .marquee-content span.skill { font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111; }
+        .marquee-content span.star { margin: 0 2rem; font-size: 1rem; color: #999; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* =========================================
+           2. AI Project - 主视图与详情
+           ========================================= */
+        .project-section { margin-bottom: 10rem; scroll-margin-top: 50px; }
+        .intro-split { display: flex; gap: 60px; align-items: center; margin-bottom: 6rem; }
+        .intro-split .intro-image { flex: 1.2; height: 600px; border-radius: 24px; background-color: #E9E2D8; border: none; transition: transform 0.3s ease; }
+        .intro-split .intro-image:hover { transform: translateY(-5px); }
+        .intro-project-image { width: 100%; height: 100%; display: block; object-fit: cover; border-radius: inherit; }
+        .intro-split .intro-text { flex: 1; padding-right: 2rem; display: flex; flex-direction: column; justify-content: center; }
+        .intro-heading { font-family: var(--font-serif); font-size: 2.8rem; line-height: 1.1; margin: 0 0 1rem 0; font-weight: 400; text-transform: uppercase; color: #111; letter-spacing: -0.01em; }
+        
+        .intro-text .role { font-size: 1rem; color: var(--text-muted); margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .intro-text ul { padding-left: 1.2rem; color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; }
+        .intro-text ul li { margin-bottom: 15px; }
+
+        .detail-view { display: none; animation: fadeIn 0.4s ease; width: 100%; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .seamless-image-stack { width: 100%; overflow: hidden; background: #111; }
+        .seamless-image-stack img { display: block; width: 100%; height: auto; margin: 0; padding: 0; border: 0; }
+        .project-page-stack { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+        .project-page-stack img { display: block; width: 100%; height: auto; border-radius: 8px; }
+
+        .two-column-layout { display: flex; gap: 40px; align-items: flex-start; }
+        .visual-column { flex: 6; display: flex; flex-direction: column; gap: 40px; }
+        .visual-column .placeholder { height: 60vh; border-radius: 16px; }
+        .text-column { flex: 4; position: sticky; top: 40px; padding-left: 20px; border-left: 1px solid var(--border-color); }
+        .text-column h2 { font-size: 2rem; margin: 0 0 0.5rem 0; }
+        .text-column .role { font-size: 1rem; color: var(--text-muted); margin-bottom: 2rem; }
+        .text-column ul { padding-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; }
+        .text-column ul li { margin-bottom: 10px; }
+        .text-column .project-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .text-column p { color: var(--text-muted); font-size: 0.98rem; line-height: 1.75; }
+        .text-only-case { max-width: 920px; margin: 0 auto; padding: clamp(36px, 7vw, 88px); background: #e8e4dc; border-radius: 16px; }
+        .text-only-case h2 { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 4.5rem); line-height: 1.05; margin: 0 0 1.5rem; font-weight: 400; }
+        .text-only-case .project-meta { color: var(--text-muted); margin-bottom: 2.5rem; }
+        .text-only-case ol { margin: 0; padding-left: 1.3rem; }
+        .text-only-case li { margin-bottom: 1.25rem; padding-left: 0.5rem; line-height: 1.8; }
+
+        /* =========================================
+           3. 空间与物理体验 (ListView)
+           ========================================= */
+        .list-view-main { animation: fadeIn 0.4s ease; }
+        .list-view { width: 100%; border-collapse: collapse; }
+        .list-view th, .list-view td { text-align: left; padding: 1.5rem 1rem; border-bottom: 1px solid var(--border-color); }
+        .list-view th { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .list-view tr.clickable-row { transition: background 0.2s; position: relative; }
+        .list-view tr.clickable-row:hover { background-color: #e5e3dc; }
+
+        #hover-thumbnail {
+            position: fixed; pointer-events: none; width: 320px; height: 220px; border-radius: 12px;
+            object-fit: cover; background-color: #d6d3cc; 
+            opacity: 0; transform: translate(-50%, -120%) scale(0.95);
+            transition: opacity 0.2s ease, transform 0.2s ease; z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        #hover-thumbnail.visible { opacity: 1; transform: translate(-50%, -120%) scale(1); }
+
+        /* =========================================
+           全局定制光标 (Enter)
+           ========================================= */
+        #custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-color: #111111;
+            color: #ffffff;
+            font-family: var(--font-stack);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 12px 24px;
+            border-radius: 100px;
+            z-index: 9999;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+        }
+        #custom-cursor.visible {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        .custom-cursor-trigger {
+            cursor: none !important;
+        }
+
+        /* =========================================
+           4. R&D Lab & Circular Gallery
+           ========================================= */
+        .circular-gallery { width: 100vw; margin-left: calc(-50vw + 50%); height: 700px; overflow: hidden; cursor: grab; position: relative; background-color: var(--bg-color); }
+        .circular-gallery:active { cursor: grabbing; }
+        .circular-gallery:focus-visible { outline: 2px solid var(--border-color); outline-offset: 4px; }
+        .circular-gallery canvas { position: relative; z-index: 2; pointer-events: none; }
+        .gallery-text-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .gallery-text-item { position: absolute; width: 100%; height: 100%; display: none; will-change: opacity; }
+        .g-text-main { position: absolute; top: 12%; left: 0; width: 100%; text-align: center; font-family: var(--font-stack); font-size: clamp(3rem, 7vw, 7rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; color: var(--text-main); white-space: pre-wrap; will-change: transform, opacity; }
+        .g-text-year { position: absolute; top: 10%; right: 8%; font-family: var(--font-stack); font-size: clamp(2rem, 4vw, 4rem); font-weight: 700; letter-spacing: -0.02em; color: var(--text-main); will-change: transform, opacity; }
+        .g-text-sub { position: absolute; bottom: 8%; left: 0; width: 100%; text-align: center; font-family: var(--font-stack); font-size: clamp(1rem, 1.5vw, 1.8rem); font-weight: 500; line-height: 1.4; letter-spacing: 0.02em; color: var(--text-muted); white-space: pre-wrap; will-change: transform, opacity; }
+
+        /* 悬浮导航栏 */
+        .bottom-nav {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); border-radius: 100px; padding: 0.5rem 1rem;
+            background-color: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); display: flex; justify-content: center; align-items: center; z-index: 100; transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bottom-nav.nav-hidden { opacity: 0; transform: translate(-50%, 40px); pointer-events: none; }
+        .bottom-nav-links { display: flex; gap: 0.5rem; list-style: none; margin: 0; padding: 0; }
+        .bottom-nav-links li a { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--text-muted); padding: 0.8rem 1.5rem; border-radius: 100px; transition: all 0.3s; }
+        .bottom-nav-links li a:hover { color: var(--text-main); background-color: rgba(0, 0, 0, 0.04); }
+
+        /* 5. 交互式物理脚页 */
+        .site-footer {
+            --gradient-start: 220px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            margin-left: calc(-50vw + 50%);
+            padding: clamp(70px, 12vh, 130px) 40px 0;
+            box-sizing: border-box;
+            overflow: hidden;
+            text-align: center;
+            background: linear-gradient(to bottom, var(--bg-color) 0, var(--bg-color) var(--gradient-start), #531301 100%);
+        }
+        .footer-heading-group, .footer-links { position: relative; z-index: 4; }
+        .footer-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 6rem); line-height: 1; margin: 0; letter-spacing: -0.02em; color: var(--text-main); text-wrap: balance; }
+        .footer-subtitle { color: #4e443f; font-size: 1.1rem; margin: 16px 0 36px; }
+        .footer-links { display: flex; align-items: center; justify-content: center; gap: 18px; }
+        .footer-cta, .footer-social {
+            display: inline-flex; align-items: center; justify-content: center; min-height: 48px;
+            box-sizing: border-box; border: 0; transition: transform 0.25s ease, background-color 0.25s ease;
+        }
+        .footer-cta { background-color: #111; color: #fff; padding: 14px 34px; border-radius: 100px; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; }
+        .footer-social { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.92); color: #531301; }
+        .footer-social svg, .footer-social img { display: block; width: 23px; height: 23px; object-fit: contain; }
+        .footer-cta:hover, .footer-social:hover { transform: translateY(-3px); }
+        .footer-cta:hover { background-color: #2b2b2b; }
+        .footer-social:hover { background-color: #fff; }
+        .footer-cta:focus-visible, .footer-social:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+        .footer-physics-stage { position: relative; z-index: 2; flex: 1 1 auto; min-height: 0; width: min(1200px, 100%); margin: 22px auto 0; touch-action: none; }
+        .skill-capsule {
+            position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; justify-content: center;
+            min-width: 126px; height: 54px; padding: 0 24px; box-sizing: border-box; border-radius: 999px;
+            background: #E5481A; color: #fff; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em;
+            white-space: nowrap; user-select: none; pointer-events: none; will-change: transform;
+            box-shadow: 0 6px 8px rgba(36, 8, 0, 0.16);
+        }
+
+        @media (max-width: 820px) {
+            .container { padding: 0 20px; }
+            .top-nav { padding-left: 20px; padding-right: 20px; }
+            .nav-center { display: none; }
+            .intro-split { flex-direction: column; gap: 32px; align-items: stretch; }
+            .intro-split .intro-image { flex: none; height: auto; aspect-ratio: 16 / 9; border-radius: 12px; }
+            .intro-split .intro-text { padding-right: 0; }
+            .two-column-layout { flex-direction: column; }
+            .text-column { position: static; border-left: 0; padding-left: 0; }
+            .list-view th:nth-child(3), .list-view td:nth-child(3) { display: none; }
+            .site-footer { height: 100vh; padding: clamp(48px, 8vh, 84px) 20px 0; }
+            .footer-title { font-size: clamp(3rem, 15vw, 5rem); }
+            .footer-subtitle { font-size: 0.95rem; }
+            .footer-links { gap: 10px; }
+            .footer-cta { padding: 13px 22px; }
+            .footer-physics-stage { min-height: 0; }
+            .skill-capsule { min-width: 108px; height: 48px; padding: 0 18px; font-size: 0.72rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+            .footer-physics-stage { min-height: 0; display: flex; align-content: flex-end; justify-content: center; flex-wrap: wrap; gap: 12px; padding: 30px 0; box-sizing: border-box; }
+            .skill-capsule { position: static; transform: none !important; will-change: auto; }
+        }
+    </style>
+</head>
+
+<body class="is-loading">
+
+    <!-- 板块 1：响应式 Startup Hero Section -->
+    <section class="startup-hero" id="section-hero">
+        <div class="content-wrapper">
+            <header class="top-nav">
+                <div class="nav-logo">()TIS</div>
+                <div class="nav-center">
+                    <a href="#section-ai-projects" class="nav-link-wrapper">
+                        <span class="nav-item" data-text="AI PROJECTS">AI PROJECTS</span>
+                    </a>
+                    <a href="#section-spatial" class="nav-link-wrapper">
+                        <span class="nav-item" data-text="SPATIAL &amp; PHYSICAL EXPERIENCE">SPATIAL &amp; PHYSICAL EXPERIENCE</span>
+                    </a>
+                    <a href="#section-rnd" class="nav-link-wrapper">
+                        <span class="nav-item" data-text="R&amp;D LAB">R&amp;D LAB</span>
+                    </a>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="center-container">
+                    
+                    <div id="loader-text">0%</div>
+                    <div id="loader-tis">TIS</div>
+                    
+                    <div class="bracket left-bracket">
+                        (
+                        <div class="slogan-left">
+                            DISCOVER<br>THE<br>NEEDS<br>BEHIND<br>TECHNOLOGY.
+                        </div>
+                    </div>
+                    
+                    <div class="tilt-wrapper" id="tiltWrapper">
+                        <div class="flip-container" id="flipContainer">
+                            <div class="card-face card-front">
+                                <img src="Bio_2.png" alt="[图片加载失败：请确保您的本地图片名为 Bio_2.png]">
+                            </div>
+                            <div class="card-face card-back">
+                                <img src="Back side_2.png" alt="[图片加载失败：请确保您的本地图片名为 Back side_2.png]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bracket right-bracket">
+                        )
+                        <div class="slogan-right">
+                            Get to know<br>me and<br>discover<br>what I can<br>do. I'll bring<br>you even<br>more value.
+                        </div>
+                    </div>
+                    
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- 绵长的深浅渐变过渡区 -->
+    <div class="hero-transition"></div>
+
+    <!-- 跑马灯组件（去除背景色，上下黑色细线） -->
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <span class="skill">Product Definition</span><span class="star">✦</span>
+            <span class="skill">MVP Design</span><span class="star">✦</span>
+            <span class="skill">User Research</span><span class="star">✦</span>
+            <span class="skill">Interaction Design</span><span class="star">✦</span>
+            <span class="skill">Gemini</span><span class="star">✦</span>
+            <span class="skill">Claude</span><span class="star">✦</span>
+            <span class="skill">Codex</span><span class="star">✦</span>
+            <span class="skill">Cursor</span><span class="star">✦</span>
+            <span class="skill">CloudCode</span><span class="star">✦</span>
+            <span class="skill">ChatGPT</span><span class="star">✦</span>
+            <span class="skill">Figma Make</span><span class="star">✦</span>
+            <span class="skill">Agent Workflow</span><span class="star">✦</span>
+            
+            <span class="skill">Product Definition</span><span class="star">✦</span>
+            <span class="skill">MVP Design</span><span class="star">✦</span>
+            <span class="skill">User Research</span><span class="star">✦</span>
+            <span class="skill">Interaction Design</span><span class="star">✦</span>
+            <span class="skill">Gemini</span><span class="star">✦</span>
+            <span class="skill">Claude</span><span class="star">✦</span>
+            <span class="skill">Codex</span><span class="star">✦</span>
+            <span class="skill">Cursor</span><span class="star">✦</span>
+            <span class="skill">CloudCode</span><span class="star">✦</span>
+            <span class="skill">ChatGPT</span><span class="star">✦</span>
+            <span class="skill">Figma Make</span><span class="star">✦</span>
+            <span class="skill">Agent Workflow</span><span class="star">✦</span>
+        </div>
+    </div>
+
+    <!-- 原有核心内容区 -->
+    <div class="container">
+        <section class="project-section" id="section-ai-projects">
+            <h6 class="section-title">01 — Selected AI Projects</h6>
+            
+            <!-- 钱搭子 概览视图 -->
+            <div id="ai-overview-container">
+                <div class="intro-split">
+                    <!-- 加上 custom-cursor-trigger 触发自定光标，加上 onclick 切换页面 -->
+                    <div class="intro-image custom-cursor-trigger" onclick="toggleView('ai-overview-container', 'ai-detail-bloom')" role="button" tabindex="0" aria-label="查看 Bloom 钱搭子项目详情">
+                        <img class="intro-project-image" src="AI Projects/bloom/1.png" alt="Bloom 钱搭子 AI 理财陪伴产品主视觉">
+                    </div>
+                    <div class="intro-text">
+                        <h2 class="intro-heading">BLOOM / 钱搭子</h2>
+                        <div class="role">Product Lead / Product Designer | HACKATHON WINNER</div>
+                        <ul>
+                            <li><strong>痛点识别：</strong>组织 67 份用户问卷并完成数据分析，识别女性理财新手在认知门槛、情绪焦虑、持续行动上的 3 类核心体验痛点。</li>
+                            <li><strong>产品验证：</strong>围绕目标制定、AI 定投建议、人生数字地图、未来来信与新手引导搭建 MVP，邀请 53 名真实用户试用，并与其中 4 名用户深度交流。</li>
+                            <li><strong>产品定义：</strong>结合 ChatGPT、Gemini 等 AI 工具完成市场分析、竞品研究及产品共创，推动方案转向“Future Self Companion” AI 理财陪伴定位。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div> 
+
+            <!-- 钱搭子 详情视图 (全屏长图排版) -->
+            <div class="detail-view" id="ai-detail-bloom">
+                <a class="btn-back" onclick="toggleView('ai-detail-bloom', 'ai-overview-container')">← Back to Overview</a>
+                <div class="seamless-image-stack" aria-label="Bloom 钱搭子项目完整设计过程">
+                    <img src="AI Projects/bloom/1.png" alt="Bloom 钱搭子项目展示第 1 页" loading="lazy">
+                    <img src="AI Projects/bloom/2.png" alt="Bloom 钱搭子项目展示第 2 页" loading="lazy">
+                    <img src="AI Projects/bloom/3.png" alt="Bloom 钱搭子项目展示第 3 页" loading="lazy">
+                    <img src="AI Projects/bloom/4.png" alt="Bloom 钱搭子项目展示第 4 页" loading="lazy">
+                    <img src="AI Projects/bloom/5.png" alt="Bloom 钱搭子项目展示第 5 页" loading="lazy">
+                    <img src="AI Projects/bloom/6.png" alt="Bloom 钱搭子项目展示第 6 页" loading="lazy">
+                    <img src="AI Projects/bloom/7.png" alt="Bloom 钱搭子项目展示第 7 页" loading="lazy">
+                    <img src="AI Projects/bloom/8.png" alt="Bloom 钱搭子项目展示第 8 页" loading="lazy">
+                    <img src="AI Projects/bloom/9.png" alt="Bloom 钱搭子项目展示第 9 页" loading="lazy">
+                    <img src="AI Projects/bloom/10.png" alt="Bloom 钱搭子项目展示第 10 页" loading="lazy">
+                    <img src="AI Projects/bloom/11.png" alt="Bloom 钱搭子项目展示第 11 页" loading="lazy">
+                    <img src="AI Projects/bloom/12.png" alt="Bloom 钱搭子项目展示第 12 页" loading="lazy">
+                    <img src="AI Projects/bloom/13.png" alt="Bloom 钱搭子项目展示第 13 页" loading="lazy">
+                    <img src="AI Projects/bloom/14.png" alt="Bloom 钱搭子项目展示第 14 页" loading="lazy">
+                    <img src="AI Projects/bloom/15.png" alt="Bloom 钱搭子项目展示第 15 页" loading="lazy">
+                    <img src="AI Projects/bloom/16.png" alt="Bloom 钱搭子项目展示第 16 页" loading="lazy">
+                    <img src="AI Projects/bloom/17.png" alt="Bloom 钱搭子项目展示第 17 页" loading="lazy">
+                    <img src="AI Projects/bloom/18.png" alt="Bloom 钱搭子项目展示第 18 页" loading="lazy">
+                    <img src="AI Projects/bloom/19.png" alt="Bloom 钱搭子项目展示第 19 页" loading="lazy">
+                    <img src="AI Projects/bloom/20.png" alt="Bloom 钱搭子项目展示第 20 页" loading="lazy">
+                </div>
+            </div>
+            
+        </section>
+
+        <section class="project-section" id="section-spatial">
+            <h6 class="section-title">02 — Spatial & Physical Experience</h6>
+            <div class="list-view-main" id="spatial-list-view">
+                <table class="list-view">
+                    <thead>
+                        <tr><th>Project</th><th>Role</th><th>Scale / Output</th><th>Timeline</th></tr>
+                    </thead>
+                    <tbody>
+                        <!-- 加上 custom-cursor-trigger 触发自定光标 -->
+                        <tr class="clickable-row custom-cursor-trigger" data-thumbnail="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-01.jpg" onclick="toggleView('spatial-list-view', 'spatial-detail-2')">
+                            <td>木墩侨乡公园改造</td><td>方案设计 / 现场调研</td><td>57,000㎡ / 约 2,000 万元</td><td>2025.08 - 2026.02</td>
+                        </tr>
+                        <tr class="clickable-row custom-cursor-trigger" onclick="toggleView('spatial-list-view', 'spatial-detail-3')">
+                            <td>家禽疫苗接种工作流程再造</td><td>用户研究 / 工作流体验优化</td><td>Workflow</td><td>2023.11 - 2024.08</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="detail-view" id="spatial-detail-2">
+                <a class="btn-back" onclick="toggleView('spatial-detail-2', 'spatial-list-view')">← Back to List</a>
+                <div class="two-column-layout">
+                    <div class="visual-column project-page-stack">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-01.jpg" alt="木墩侨乡公园改造方案第 1 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-02.jpg" alt="木墩侨乡公园改造方案第 2 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-03.jpg" alt="木墩侨乡公园改造方案第 3 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-04.jpg" alt="木墩侨乡公园改造方案第 4 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-05.jpg" alt="木墩侨乡公园改造方案第 5 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-06.jpg" alt="木墩侨乡公园改造方案第 6 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-07.jpg" alt="木墩侨乡公园改造方案第 7 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-08.jpg" alt="木墩侨乡公园改造方案第 8 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-09.jpg" alt="木墩侨乡公园改造方案第 9 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-10.jpg" alt="木墩侨乡公园改造方案第 10 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-11.jpg" alt="木墩侨乡公园改造方案第 11 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-12.jpg" alt="木墩侨乡公园改造方案第 12 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-13.jpg" alt="木墩侨乡公园改造方案第 13 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-14.jpg" alt="木墩侨乡公园改造方案第 14 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-15.jpg" alt="木墩侨乡公园改造方案第 15 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-16.jpg" alt="木墩侨乡公园改造方案第 16 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-17.jpg" alt="木墩侨乡公园改造方案第 17 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-18.jpg" alt="木墩侨乡公园改造方案第 18 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-19.jpg" alt="木墩侨乡公园改造方案第 19 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-20.jpg" alt="木墩侨乡公园改造方案第 20 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-21.jpg" alt="木墩侨乡公园改造方案第 21 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-22.jpg" alt="木墩侨乡公园改造方案第 22 页" loading="lazy">
+                        <img src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-23.jpg" alt="木墩侨乡公园改造方案第 23 页" loading="lazy">
+                    </div>
+                    <aside class="text-column">
+                        <h2>木墩侨乡公园改造</h2>
+                        <div class="project-meta">方案设计 / 现场调研 · 2025.08—2026.02 · 57,000㎡ / 约 2,000 万元</div>
+                        <p>参与总投资约 2,000 万元的城市更新项目，主导 30 份居民问卷、用户访谈与行为观察，推动方案从经验判断转向用户研究与数据分析驱动。</p>
+                        <p>利用 Excel + AI 完成数据清洗、关键词聚类及需求优先级分析，识别设施老旧 70%、安全性不足 80%、配套服务欠缺 60% 等核心问题。</p>
+                        <p>结合场地调研、居民需求、地形特征与学校周边活动特征重新规划功能布局，协助完成 3—4 轮方案迭代，项目方案获甲方采用并进入施工图阶段。</p>
+                    </aside>
+                </div>
+            </div>
+            <div class="detail-view" id="spatial-detail-3">
+                <a class="btn-back" onclick="toggleView('spatial-detail-3', 'spatial-list-view')">← Back to List</a>
+                <article class="text-only-case">
+                    <h2>家禽疫苗接种工作流程再造</h2>
+                    <div class="project-meta">用户研究 / 工作流体验优化 · 2023.11—2024.08</div>
+                    <ol>
+                        <li>深入一线观察用户操作，结合养殖从业者访谈及 2 家养殖场调研建立完整用户旅程，识别抓取、注射、释放流程中的操作风险与体验瓶颈。</li>
+                        <li>基于用户行为分析提出 2 套产品优化方案，将优化重点从硬件本体扩展至工作流设计，推动团队重新评估用户操作链路中的可用性与安全性问题。</li>
+                        <li>配合项目负责人完成方案评审、原型试用与打样验证，记录真实用户在操作流程中的反馈，推动产品进入验证阶段，积累“问题发现 → 工作流设计 → 用户体验反馈 → 原型验证”的产品体验优化经验。</li>
+                    </ol>
+                </article>
+            </div>
+        </section>
+
+        <section class="project-section" id="section-rnd" style="margin-bottom: 0;">
+            <h6 class="section-title">03 — R&D Lab & Visual Assets</h6>
+            <div id="circular-gallery-container" class="circular-gallery" tabindex="0" role="region">
+                <div id="gallery-text-overlay" class="gallery-text-overlay"></div>
+            </div>
+        </section>
+
+        <footer class="site-footer" id="section-footer">
+            <div class="footer-heading-group">
+                <h1 class="footer-title">Otis 区笑君</h1>
+                <p class="footer-subtitle">Open for new opportunities in AI &amp; Product Design</p>
+            </div>
+            <div class="footer-links" aria-label="个人链接">
+                <a class="footer-social" href="https://github.com/oia314305-star" target="_blank" rel="noopener noreferrer" aria-label="访问 Otis 的 GitHub" title="GitHub">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.52-1.34-1.29-1.69-1.29-1.69-1.05-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.72 1.27 3.39.97.1-.75.4-1.27.74-1.56-2.57-.29-5.27-1.28-5.27-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.16 1.18a10.94 10.94 0 0 1 5.75 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.71 5.38-5.29 5.67.42.36.79 1.06.79 2.14v3.18c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
+                    <span class="sr-only">GitHub</span>
+                </a>
+                <a class="footer-cta" href="区笑君 · 用户体验研究与体验优化2026.pdf" download>Download Resume</a>
+                <a class="footer-social" href="https://xhslink.cn/o/2vgOZQcUKNu" target="_blank" rel="noopener noreferrer" aria-label="访问 Otis 的小红书主页" title="小红书">
+                    <img src="小红书.svg" alt="" aria-hidden="true">
+                    <span class="sr-only">小红书</span>
+                </a>
+            </div>
+            <div class="footer-physics-stage" id="footer-physics-stage" aria-label="可与鼠标互动的能力关键词胶囊"></div>
+        </footer>
+    </div>
+
+    <img id="hover-thumbnail" src="Spatial &amp; Physical Experience/木墩侨乡公园_pages/mudun-01.jpg" alt="" aria-hidden="true">
+    <div id="custom-cursor">Enter</div>
+    
+    <nav class="bottom-nav nav-hidden">
+        <ul class="bottom-nav-links">
+            <li><a href="#section-ai-projects">AI Projects</a></li>
+            <li><a href="#section-spatial">Spatial Experience</a></li>
+            <li><a href="#section-rnd">R&D Lab</a></li>
+        </ul>
+    </nav>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loaderText = document.getElementById("loader-text");
+            const body = document.body;
+            
+            let progress = 0;
+            const duration = 2500; 
+            const intervalTime = 25; 
+            const step = 100 / (duration / intervalTime);
+
+            const timer = setInterval(() => {
+                progress += step;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(timer);
+                    loaderText.innerText = "100%";
+                    
+                    body.classList.remove("is-loading");
+                    body.classList.add("is-loaded");
+                } else {
+                    loaderText.innerText = Math.floor(progress) + "%";
+                }
+            }, intervalTime);
+
+            const tiltWrapper = document.getElementById('tiltWrapper');
+            const flipContainer = document.getElementById('flipContainer');
+            const introImage = document.querySelector('.intro-image');
+
+            if (introImage) {
+                introImage.setAttribute('tabindex', '0');
+                introImage.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleView('ai-overview-container', 'ai-detail-bloom');
+                    }
+                });
+            }
+
+            tiltWrapper.addEventListener('mousemove', (e) => {
+                if (document.body.classList.contains('is-loading')) return;
+                
+                const rect = tiltWrapper.getBoundingClientRect();
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -12;
+                const rotateY = ((x - centerX) / centerX) * 12;
+
+                tiltWrapper.style.transform = `scale(1) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            tiltWrapper.addEventListener('mouseleave', () => {
+                if (document.body.classList.contains('is-loading')) return;
+                tiltWrapper.style.transform = `scale(1) rotateX(0deg) rotateY(0deg)`;
+                tiltWrapper.style.transition = `transform 0.5s ease-out`;
+                setTimeout(() => { tiltWrapper.style.transition = `transform 0.1s ease-out`; }, 500);
+            });
+
+            tiltWrapper.addEventListener('click', () => {
+                if (document.body.classList.contains('is-loading')) return;
+                flipContainer.classList.toggle('is-flipped');
+            });
+
+            function initFooterPhysics() {
+                const stage = document.getElementById('footer-physics-stage');
+                if (!stage) return;
+
+                const footer = stage.closest('.site-footer');
+                const footerTitle = footer?.querySelector('.footer-title');
+                const syncGradientStart = () => {
+                    if (!footer || !footerTitle) return;
+                    const footerRect = footer.getBoundingClientRect();
+                    const titleRect = footerTitle.getBoundingClientRect();
+                    const titleMidpoint = titleRect.top - footerRect.top + titleRect.height / 2;
+                    footer.style.setProperty('--gradient-start', `${titleMidpoint}px`);
+                };
+                syncGradientStart();
+
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const words = [
+                    'User Research', 'AI Product', 'Interaction Design', 'MVP Design',
+                    'Journey Mapping', 'Agent Workflow', 'Product Definition', 'User Flow',
+                    'Prototype', 'Insight', 'Strategy', 'System Thinking',
+                    'Workshop', 'Design Ops'
+                ];
+
+                const capsuleCount = window.matchMedia('(max-width: 820px)').matches ? 9 : 14;
+                const activeWords = words.slice(0, capsuleCount);
+                const capsules = [];
+                const state = [];
+                const bounds = { width: 0, height: 0 };
+                let pointer = { x: 0, y: 0, vx: 0, vy: 0, active: false };
+                let lastPointer = null;
+                let running = false;
+                let raf = 0;
+                let lastTs = 0;
+
+                stage.innerHTML = '';
+                stage.style.position = 'relative';
+
+                activeWords.forEach((label, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'skill-capsule';
+                    el.textContent = label;
+                    el.dataset.index = String(index);
+                    stage.appendChild(el);
+                    capsules.push(el);
+                    state.push({
+                        x: 0,
+                        y: 0,
+                        vx: (Math.random() - 0.5) * 60,
+                        vy: Math.random() * 20,
+                        w: 0,
+                        h: 0,
+                        r: 999,
+                    });
+                });
+
+                function resize() {
+                    bounds.width = stage.clientWidth;
+                    bounds.height = stage.clientHeight;
+                    const cols = Math.max(3, Math.floor(Math.sqrt(capsules.length)));
+                    const colWidth = bounds.width / cols;
+                    const rowHeight = 82;
+                    capsules.forEach((el, index) => {
+                        const rect = el.getBoundingClientRect();
+                        state[index].w = rect.width;
+                        state[index].h = rect.height;
+                        const row = Math.floor(index / cols);
+                        const col = index % cols;
+                        const jitterX = (Math.random() - 0.5) * Math.min(40, colWidth * 0.16);
+                        const jitterY = Math.random() * 18;
+                        state[index].x = Math.min(bounds.width - rect.width, Math.max(0, col * colWidth + colWidth * 0.5 - rect.width / 2 + jitterX));
+                        state[index].y = Math.min(bounds.height - rect.height, 16 + row * rowHeight + jitterY);
+                        state[index].vx = (Math.random() - 0.5) * 50;
+                        state[index].vy = Math.random() * 10;
+                    });
+                }
+
+                function applyPointerForce(x, y, speedX, speedY) {
+                    for (let i = 0; i < state.length; i += 1) {
+                        const s = state[i];
+                        const cx = s.x + s.w / 2;
+                        const cy = s.y + s.h / 2;
+                        const dx = cx - x;
+                        const dy = cy - y;
+                        const dist = Math.max(18, Math.hypot(dx, dy));
+                        const radius = 120;
+                        if (dist < radius) {
+                            const force = (1 - dist / radius) * 220;
+                            const nx = dx / dist;
+                            const ny = dy / dist;
+                            s.vx += nx * force + speedX * 0.5;
+                            s.vy += ny * force + speedY * 0.35 - 30;
+                        }
+                    }
+                }
+
+                function update(ts) {
+                    if (!running) return;
+                    if (!lastTs) lastTs = ts;
+                    const dt = Math.min(0.032, (ts - lastTs) / 1000);
+                    lastTs = ts;
+
+                    for (let i = 0; i < state.length; i += 1) {
+                        const s = state[i];
+                        s.vy += 720 * dt;
+                        s.vx *= Math.pow(0.995, dt * 60);
+                        s.vy *= Math.pow(0.999, dt * 60);
+                        s.x += s.vx * dt;
+                        s.y += s.vy * dt;
+
+                        if (s.x < 0) { s.x = 0; s.vx = Math.abs(s.vx) * 0.7; }
+                        if (s.x + s.w > bounds.width) { s.x = bounds.width - s.w; s.vx = -Math.abs(s.vx) * 0.7; }
+                        if (s.y < 0) { s.y = 0; s.vy = Math.abs(s.vy) * 0.65; }
+                        if (s.y + s.h > bounds.height) { s.y = bounds.height - s.h; s.vy = -Math.abs(s.vy) * 0.52; s.vx *= 0.97; }
+                    }
+
+                    for (let i = 0; i < state.length; i += 1) {
+                        for (let j = i + 1; j < state.length; j += 1) {
+                            const a = state[i];
+                            const b = state[j];
+                            const ax = a.x + a.w / 2;
+                            const ay = a.y + a.h / 2;
+                            const bx = b.x + b.w / 2;
+                            const by = b.y + b.h / 2;
+                            const dx = bx - ax;
+                            const dy = by - ay;
+                            const overlapX = (a.w + b.w) / 2 - Math.abs(dx);
+                            const overlapY = (a.h + b.h) / 2 - Math.abs(dy);
+                            if (overlapX > 0 && overlapY > 0) {
+                                if (overlapX < overlapY) {
+                                    const push = overlapX / 2 + 0.5;
+                                    const dir = dx >= 0 ? 1 : -1;
+                                    a.x -= push * dir;
+                                    b.x += push * dir;
+                                    a.vx -= dir * 45;
+                                    b.vx += dir * 45;
+                                } else {
+                                    const push = overlapY / 2 + 0.5;
+                                    const dir = dy >= 0 ? 1 : -1;
+                                    a.y -= push * dir;
+                                    b.y += push * dir;
+                                    a.vy -= dir * 45;
+                                    b.vy += dir * 45;
+                                }
+                            }
+                        }
+                    }
+
+                    for (let i = 0; i < state.length; i += 1) {
+                        const s = state[i];
+                        capsules[i].style.transform = `translate3d(${s.x}px, ${s.y}px, 0) rotate(${Math.max(-12, Math.min(12, s.vx * 0.08))}deg)`;
+                    }
+
+                    raf = requestAnimationFrame(update);
+                }
+
+                function pointerPos(ev) {
+                    const rect = stage.getBoundingClientRect();
+                    return { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+                }
+
+                stage.addEventListener('pointermove', (ev) => {
+                    const pos = pointerPos(ev);
+                    if (lastPointer) {
+                        pointer.vx = pos.x - lastPointer.x;
+                        pointer.vy = pos.y - lastPointer.y;
+                    }
+                    lastPointer = pos;
+                    pointer = { ...pos, vx: pointer.vx || 0, vy: pointer.vy || 0, active: true };
+                    applyPointerForce(pos.x, pos.y, pointer.vx, pointer.vy);
+                });
+                stage.addEventListener('pointerdown', (ev) => {
+                    const pos = pointerPos(ev);
+                    pointer = { ...pos, vx: 0, vy: 0, active: true };
+                    applyPointerForce(pos.x, pos.y, 0, -120);
+                    stage.setPointerCapture?.(ev.pointerId);
+                });
+                stage.addEventListener('pointerleave', () => { lastPointer = null; pointer.active = false; });
+                stage.addEventListener('pointerup', () => { pointer.active = false; });
+                window.addEventListener('resize', () => {
+                    syncGradientStart();
+                    resize();
+                });
+
+                if (reducedMotion) {
+                    resize();
+                    capsules.forEach((el, index) => {
+                        const s = state[index];
+                        el.style.position = 'static';
+                        el.style.transform = 'none';
+                    });
+                    return;
+                }
+
+                resize();
+                running = true;
+                cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(update);
+            }
+
+            initFooterPhysics();
+        });
+
+        function toggleView(hideId, showId) {
+            document.getElementById(hideId).style.display = 'none';
+            document.getElementById(showId).style.display = 'block';
+            const element = document.getElementById(showId);
+            const y = element.getBoundingClientRect().top + window.scrollY - 50;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const thumbnail = document.getElementById('hover-thumbnail');
+            const customCursor = document.getElementById('custom-cursor');
+            const triggers = document.querySelectorAll('.custom-cursor-trigger');
+            
+            // 全局游标跟随逻辑
+            document.addEventListener('mousemove', (e) => {
+                customCursor.style.left = e.clientX + 'px';
+                customCursor.style.top = e.clientY + 'px';
+            });
+
+            // 定制 Enter 悬浮事件绑定
+            triggers.forEach(trigger => {
+                trigger.addEventListener('mouseenter', () => {
+                    customCursor.classList.add('visible');
+                });
+                trigger.addEventListener('mouseleave', () => {
+                    customCursor.classList.remove('visible');
+                });
+            });
+
+            // 缩略图悬浮事件
+            const rows = document.querySelectorAll('.clickable-row');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    const imgSrc = row.getAttribute('data-thumbnail');
+                    if (imgSrc) {
+                        thumbnail.src = new URL(imgSrc, document.baseURI).href;
+                        thumbnail.classList.add('visible');
+                    }
+                });
+                row.addEventListener('mousemove', (e) => { thumbnail.style.left = e.clientX + 'px'; thumbnail.style.top = e.clientY + 'px'; });
+                row.addEventListener('mouseleave', () => { thumbnail.classList.remove('visible'); });
+            });
+
+            // 悬浮导航栏逻辑
+            const bottomNav = document.querySelector('.bottom-nav');
+            const heroSection = document.getElementById('section-hero');
+            const footer = document.querySelector('.site-footer');
+
+            if (bottomNav && heroSection && footer) {
+                const checkNavVisibility = () => {
+                    const heroBottom = heroSection.getBoundingClientRect().bottom;
+                    const footerTop = footer.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    if (heroBottom <= 100 && footerTop > windowHeight - 50) bottomNav.classList.remove('nav-hidden');
+                    else bottomNav.classList.add('nav-hidden');
+                };
+                window.addEventListener('scroll', checkNavVisibility);
+            }
+        });
+    </script>
+
+    <!-- WebGL Script -->
+    <script type="module">
+        import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'https://cdn.jsdelivr.net/npm/ogl@1.0.11/+esm';
+
+        function debounce(func, wait) { let timeout; return function (...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); }; }
+        function lerp(p1, p2, t) { return p1 + (p2 - p1) * t; }
+
+        class Media {
+            constructor({ geometry, gl, data, index, length, renderer, scene, screen, viewport, bend, borderRadius = 0 }) {
+                this.extra = 0; this.geometry = geometry; this.gl = gl; this.data = data; this.index = index; this.length = length; this.renderer = renderer; this.scene = scene; this.screen = screen; this.viewport = viewport; this.bend = bend; this.borderRadius = borderRadius;
+                this.createShader(); this.createMesh(); this.createDOMNode(); this.onResize();
+            }
+            createShader() {
+                const texture = new Texture(this.gl, { generateMipmaps: true });
+                this.program = new Program(this.gl, {
+                    depthTest: false, depthWrite: false, transparent: true,
+                    vertex: `precision highp float; attribute vec3 position; attribute vec2 uv; uniform mat4 modelViewMatrix; uniform mat4 projectionMatrix; uniform float uTime; uniform float uSpeed; varying vec2 vUv; void main() { vUv = uv; vec3 p = position; p.z = (sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5) * (0.1 + uSpeed * 0.5); gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0); }`,
+                    fragment: `precision highp float; uniform vec2 uImageSizes; uniform vec2 uPlaneSizes; uniform sampler2D tMap; uniform float uBorderRadius; varying vec2 vUv; float roundedBoxSDF(vec2 p, vec2 b, float r) { vec2 d = abs(p) - b; return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r; } void main() { vec2 ratio = vec2( min((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0), min((uPlaneSizes.y / uPlaneSizes.x) / (uImageSizes.y / uImageSizes.x), 1.0) ); vec2 uv = vec2( vUv.x * ratio.x + (1.0 - ratio.x) * 0.5, vUv.y * ratio.y + (1.0 - ratio.y) * 0.5 ); vec4 color = texture2D(tMap, uv); float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius); float edgeSmooth = 0.002; float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d); gl_FragColor = vec4(color.rgb, alpha); }`,
+                    uniforms: { tMap: { value: texture }, uPlaneSizes: { value: [0, 0] }, uImageSizes: { value: [0, 0] }, uSpeed: { value: 0 }, uTime: { value: 100 * Math.random() }, uBorderRadius: { value: this.borderRadius } }
+                });
+                const img = new Image();
+                if (window.location.protocol !== 'file:') img.crossOrigin = 'anonymous';
+                img.onload = () => { texture.image = img; this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight]; };
+                img.onerror = () => { this.domNode?.classList.add('media-load-error'); };
+                img.src = this.data.image;
+            }
+            createMesh() { this.plane = new Mesh(this.gl, { geometry: this.geometry, program: this.program }); this.plane.setParent(this.scene); }
+            createDOMNode() {
+                this.domNode = document.createElement('div'); this.domNode.className = 'gallery-text-item';
+                this.domNode.innerHTML = `<div class="g-text-main">${this.data.mainTitle}</div><div class="g-text-year">${this.data.year}</div><div class="g-text-sub">${this.data.subTitle}</div>`;
+                this.domMain = this.domNode.querySelector('.g-text-main'); this.domSub = this.domNode.querySelector('.g-text-sub'); this.domYear = this.domNode.querySelector('.g-text-year');
+                const overlay = document.getElementById('gallery-text-overlay'); if(overlay) overlay.appendChild(this.domNode);
+            }
+            update(scroll, direction) {
+                this.plane.position.x = this.x - scroll.current - this.extra;
+                const x = this.plane.position.x; const H = this.viewport.width / 2;
+                if (this.bend === 0) { this.plane.position.y = 0; this.plane.rotation.z = 0; } else {
+                    const B_abs = Math.abs(this.bend); const R = (H * H + B_abs * B_abs) / (2 * B_abs); const effectiveX = Math.min(Math.abs(x), H); const arc = R - Math.sqrt(R * R - effectiveX * effectiveX);
+                    if (this.bend > 0) { this.plane.position.y = -arc; this.plane.rotation.z = -Math.sign(x) * Math.asin(effectiveX / R); } else { this.plane.position.y = arc; this.plane.rotation.z = Math.sign(x) * Math.asin(effectiveX / R); }
+                }
+                this.speed = scroll.current - scroll.last; this.program.uniforms.uTime.value += 0.04; this.program.uniforms.uSpeed.value = this.speed;
+                let progress = x / this.width;
+                if (Math.abs(progress) < 1.2 && this.domNode) {
+                    let opacity = 1 - Math.abs(progress); this.domNode.style.display = 'block';
+                    if (this.domMain) { this.domMain.style.transform = `translateY(${progress * 150}px)`; this.domMain.style.opacity = opacity; }
+                    if (this.domYear) { this.domYear.style.transform = `translateY(${progress * 250}px)`; this.domYear.style.opacity = opacity; }
+                    if (this.domSub) { this.domSub.style.transform = `translateY(${progress * 100}px)`; this.domSub.style.opacity = opacity; }
+                } else if (this.domNode) { this.domNode.style.display = 'none'; }
+                const planeOffset = this.plane.scale.x / 2; const viewportOffset = this.viewport.width / 2;
+                this.isBefore = this.plane.position.x + planeOffset < -viewportOffset; this.isAfter = this.plane.position.x - planeOffset > viewportOffset;
+                if (direction === 'right' && this.isBefore) { this.extra -= this.widthTotal; this.isBefore = this.isAfter = false; }
+                if (direction === 'left' && this.isAfter) { this.extra += this.widthTotal; this.isBefore = this.isAfter = false; }
+            }
+            onResize({ screen, viewport } = {}) {
+                if (screen) this.screen = screen;
+                if (viewport) { this.viewport = viewport; if (this.plane.program.uniforms.uViewportSizes) { this.plane.program.uniforms.uViewportSizes.value = [this.viewport.width, this.viewport.height]; } }
+                this.scale = this.screen.height / 1500;
+                this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
+                this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+                this.padding = this.plane.scale.x * 0.4; this.width = this.plane.scale.x + this.padding;
+                this.widthTotal = this.width * this.length; this.x = this.width * this.index;
+            }
+        }
+
+        class App {
+            constructor(container, { items, bend = 3, borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05 } = {}) {
+                document.documentElement.classList.remove('no-js'); this.container = container; this.scrollSpeed = scrollSpeed;
+                this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 }; this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
+                this.createRenderer(); this.createCamera(); this.createScene(); this.onResize(); this.createGeometry(); this.createMedias(items, bend, borderRadius); this.update(); this.addEventListeners();
+            }
+            createRenderer() { this.renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) }); this.gl = this.renderer.gl; this.gl.clearColor(0, 0, 0, 0); this.container.appendChild(this.gl.canvas); }
+            createCamera() { this.camera = new Camera(this.gl); this.camera.fov = 45; this.camera.position.z = 20; }
+            createScene() { this.scene = new Transform(); }
+            createGeometry() { this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 }); }
+            createMedias(items, bend, borderRadius) { const galleryItems = items && items.length ? items : []; this.mediasImages = galleryItems.concat(galleryItems); this.medias = this.mediasImages.map((data, index) => { return new Media({ geometry: this.planeGeometry, gl: this.gl, data: data, index, length: this.mediasImages.length, renderer: this.renderer, scene: this.scene, screen: this.screen, viewport: this.viewport, bend, borderRadius }); }); }
+            onTouchDown(e) { this.isDown = true; this.scroll.position = this.scroll.current; this.start = e.touches ? e.touches[0].clientX : e.clientX; }
+            onTouchMove(e) { if (!this.isDown) return; const x = e.touches ? e.touches[0].clientX : e.clientX; const distance = (this.start - x) * (this.scrollSpeed * 0.025); this.scroll.target = this.scroll.position + distance; }
+            onTouchUp() { this.isDown = false; this.onCheck(); }
+            onWheel(e) { const delta = e.deltaY || e.wheelDelta || e.detail; this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2; this.onCheckDebounce(); }
+            onKeyDown(e) { switch (e.key) { case 'ArrowRight': e.preventDefault(); this.scroll.target += this.scrollSpeed * 5; this.onCheckDebounce(); break; case 'ArrowLeft': e.preventDefault(); this.scroll.target -= this.scrollSpeed * 5; this.onCheckDebounce(); break; case 'Home': e.preventDefault(); this.scroll.target = 0; this.onCheckDebounce(); break; } }
+            onCheck() { if (!this.medias || !this.medias[0]) return; const width = this.medias[0].width; const itemIndex = Math.round(Math.abs(this.scroll.target) / width); const item = width * itemIndex; this.scroll.target = this.scroll.target < 0 ? -item : item; }
+            onResize() { this.screen = { width: this.container.clientWidth, height: this.container.clientHeight }; this.renderer.setSize(this.screen.width, this.screen.height); this.camera.perspective({ aspect: this.screen.width / this.screen.height }); const fov = (this.camera.fov * Math.PI) / 180; const height = 2 * Math.tan(fov / 2) * this.camera.position.z; const width = height * this.camera.aspect; this.viewport = { width, height }; if (this.medias) this.medias.forEach(media => media.onResize({ screen: this.screen, viewport: this.viewport })); }
+            update() { this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease); const direction = this.scroll.current > this.scroll.last ? 'right' : 'left'; if (this.medias) this.medias.forEach(media => media.update(this.scroll, direction)); this.renderer.render({ scene: this.scene, camera: this.camera }); this.scroll.last = this.scroll.current; this.raf = window.requestAnimationFrame(this.update.bind(this)); }
+            addEventListeners() {
+                this.boundOnResize = this.onResize.bind(this); this.boundOnWheel = this.onWheel.bind(this); this.boundOnTouchDown = this.onTouchDown.bind(this); this.boundOnTouchMove = this.onTouchMove.bind(this); this.boundOnTouchUp = this.onTouchUp.bind(this); this.boundOnKeyDown = this.onKeyDown.bind(this);
+                window.addEventListener('resize', this.boundOnResize); window.addEventListener('wheel', this.boundOnWheel, { passive: false }); window.addEventListener('mousedown', this.boundOnTouchDown); window.addEventListener('mousemove', this.boundOnTouchMove); window.addEventListener('mouseup', this.boundOnTouchUp); window.addEventListener('touchstart', this.boundOnTouchDown, { passive: false }); window.addEventListener('touchmove', this.boundOnTouchMove, { passive: false }); window.addEventListener('touchend', this.boundOnTouchUp); this.container.addEventListener('keydown', this.boundOnKeyDown);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('circular-gallery-container');
+            if (!container) return;
+            const myGalleryItems = [
+                { image: 'R&D Lab/AIGC/export (1).png', mainTitle: 'AIGC\nExploration 01', subTitle: 'Visual Research\nAI Experiment', year: '2026' },
+                { image: 'R&D Lab/AIGC/export (3).png', mainTitle: 'AIGC\nExploration 02', subTitle: 'Visual Research\nAI Experiment', year: '2026' },
+                { image: 'R&D Lab/AIGC/Gemini_Generated_Image_ (1).png', mainTitle: 'AIGC\nExploration 03', subTitle: 'Visual Research\nAI Experiment', year: '2026' },
+                { image: 'R&D Lab/AIGC/Gemini_Generated_Image_ (4).png', mainTitle: 'AIGC\nExploration 04', subTitle: 'Visual Research\nAI Experiment', year: '2026' },
+                { image: 'R&D Lab/AIGC/Gemini_Generated_Image_ (5).png', mainTitle: 'AIGC\nExploration 05', subTitle: 'Visual Research\nAI Experiment', year: '2026' },
+                { image: 'R&D Lab/AIGC/Gemini_Generated_Image_.png', mainTitle: 'AIGC\nExploration 06', subTitle: 'Visual Research\nAI Experiment', year: '2026' },
+                { image: 'R&D Lab/AIGC/Gemini_Generated_Image_w7tccxw7tccxw7tc.png', mainTitle: 'AIGC\nExploration 07', subTitle: 'Visual Research\nAI Experiment', year: '2026' },
+                { image: 'R&D Lab/AIGC/nano_banana_pro_00010_.png', mainTitle: 'AIGC\nExploration 08', subTitle: 'Visual Research\nAI Experiment', year: '2026' }
+            ];
+
+            new App(container, { items: myGalleryItems, bend: 3, borderRadius: 0.05, scrollSpeed: 2, scrollEase: 0.05 });
+        });
+    </script>
+</body>
+</html>
