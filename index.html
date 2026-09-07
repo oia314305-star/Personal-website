@@ -312,6 +312,46 @@
         .intro-text ul { padding-left: 1.2rem; color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; }
         .intro-text ul li { margin-bottom: 15px; }
 
+        .project-link-row {
+            margin-top: 1.5rem;
+        }
+
+        .project-link-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            min-height: 48px;
+            padding: 0.65rem 1.15rem;
+            border-radius: 999px;
+            background: #111111;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: 0;
+            white-space: nowrap;
+            transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .project-link-pill:hover {
+            transform: translateY(-1px);
+            background: #000000;
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+
+        .project-link-pill:focus-visible {
+            outline: 2px solid #111111;
+            outline-offset: 3px;
+        }
+
+        .project-link-icon {
+            width: 1.05rem;
+            height: 1.05rem;
+            flex: 0 0 auto;
+        }
+
         .detail-view { display: none; animation: fadeIn 0.4s ease; width: 100%; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -587,6 +627,15 @@
                             <li><strong>产品验证：</strong>围绕目标制定、AI 定投建议、人生数字地图、未来来信与新手引导搭建 MVP，邀请 53 名真实用户试用，并与其中 4 名用户深度交流。</li>
                             <li><strong>产品定义：</strong>结合 ChatGPT、Gemini 等 AI 工具完成市场分析、竞品研究及产品共创，推动方案转向“Future Self Companion” AI 理财陪伴定位。</li>
                         </ul>
+                        <div class="project-link-row">
+                            <a class="project-link-pill" href="https://541541541.github.io/qiandazi/" target="_blank" rel="noopener noreferrer" aria-label="Go to the website，打开钱袋子项目网站">
+                                <svg class="project-link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M10 13a5 5 0 0 1 0-7.07l1.17-1.17a5 5 0 0 1 7.07 0l.88.88a5 5 0 0 1 0 7.07l-1.17 1.17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M14 11a5 5 0 0 1 0 7.07l-1.17 1.17a5 5 0 0 1-7.07 0l-.88-.88a5 5 0 0 1 0-7.07l1.17-1.17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span>Go to the website</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div> 
